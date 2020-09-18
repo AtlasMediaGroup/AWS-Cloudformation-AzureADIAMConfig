@@ -1,0 +1,210 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Designer':
+    e175a0cd-6d63-4701-84ca-97fc0a0981e3:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 250
+        'y': -50
+      z: 0
+      embeds: []
+      isassociatedwith:
+        - 85a8a87c-1560-49ba-b44d-d305e4da922c
+    e2486f67-0df5-4b8f-bea4-2e2a34026fd5:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        'y': 60
+      z: 0
+      embeds: []
+      dependson:
+        - 60c113b8-19cc-456e-8ecb-83be7dd9ab88
+    85a8a87c-1560-49ba-b44d-d305e4da922c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': -50
+      z: 0
+      embeds: []
+      isassociatedwith:
+        - e175a0cd-6d63-4701-84ca-97fc0a0981e3
+    f6eb9ec8-763d-4ca6-a282-53d50b5db0a3:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 370
+        'y': 50
+      z: 0
+      embeds: []
+    60c113b8-19cc-456e-8ecb-83be7dd9ab88:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        'y': -50
+      z: 0
+      embeds: []
+    171670e4-82d5-4c52-891f-e86130c3c4b4:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 670
+        'y': -50
+      z: 0
+      embeds: []
+    e8caaf85-48e4-4ed1-9a61-be7c3326ad22:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 670
+        'y': 60
+      z: 0
+      embeds: []
+      dependson:
+        - 171670e4-82d5-4c52-891f-e86130c3c4b4
+    25fbc7a7-3929-4e04-82db-ae99a6864df8:
+      source:
+        id: 85a8a87c-1560-49ba-b44d-d305e4da922c
+      target:
+        id: e175a0cd-6d63-4701-84ca-97fc0a0981e3
+      z: 11
+Resources:
+  IAMATLASCorpAzureAdUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: ATLAS_CORP-AzureAD-User
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e175a0cd-6d63-4701-84ca-97fc0a0981e3
+  IAMATLASCORPAdministratorAccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ATLAS_CORP-AdministratorAccess
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+          - Effect: Deny
+            Action: '*'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/ATLAS_CORP*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/ATLAS_CORP*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:saml-provider/ATLAS_CORP*'
+      Roles:
+        - !Ref IAMATLASCORPAdministratorRole
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e2486f67-0df5-4b8f-bea4-2e2a34026fd5
+    DependsOn:
+      - IAMATLASCORPAdministratorRole
+  IAMATLASCORPAzureADAccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ATLAS_CORP-AzureAD-Access
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'iam:ListRoles'
+            Resource: '*'
+      Users:
+        - !Ref IAMATLASCorpAzureAdUser
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 85a8a87c-1560-49ba-b44d-d305e4da922c
+  IAMATLASCORPAzureADUserAccessCreds:
+    Type: 'AWS::IAM::AccessKey'
+    Properties:
+      UserName: !Ref IAMATLASCorpAzureAdUser
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f6eb9ec8-763d-4ca6-a282-53d50b5db0a3
+    DependsOn:
+      - IAMATLASCorpAzureAdUser
+  IAMATLASCORPAdministratorRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:saml-provider/ATLAS_CORP-AzureAD'
+            Action: 'sts:AssumeRoleWithSAML'
+            Condition:
+              StringEquals:
+                'SAML:aud': 'https://signin.aws.amazon.com/saml'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 60c113b8-19cc-456e-8ecb-83be7dd9ab88
+  IAMATLASCorpDeveloperRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:saml-provider/ATLAS_CORP-AzureAD'
+            Action: 'sts:AssumeRoleWithSAML'
+            Condition:
+              StringEquals:
+                'SAML:aud': 'https://signin.aws.amazon.com/saml'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 171670e4-82d5-4c52-891f-e86130c3c4b4
+  IAMATLASCORPDeveloperPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ATLAS_CORP-DeveloperAccess
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            NotAction:
+              - 'iam:*'
+              - 'organizations:*'
+              - 'account:*'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'iam:CreateServiceLinkedRole'
+              - 'iam:DeleteServiceLinkedRole'
+              - 'iam:ListRoles'
+              - 'organizations:DescribeOrganization'
+              - 'account:ListRegions'
+            Resource: '*'
+          - Effect: Deny
+            Action: '*'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/ATLAS_CORP*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/ATLAS_CORP*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:saml-provider/ATLAS_CORP*'
+      Roles:
+        - !Ref IAMATLASCorpDeveloperRole
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e8caaf85-48e4-4ed1-9a61-be7c3326ad22
+    DependsOn:
+      - IAMATLASCorpDeveloperRole
+Outputs:
+  AccessKey:
+    Value: !Ref IAMATLASCORPAzureADUserAccessCreds
+    Description: AWSAccessKeyId of new user
+  SecretKey:
+    Value: !GetAtt 
+      - IAMATLASCORPAzureADUserAccessCreds
+      - SecretAccessKey
+    Description: AWSSecretKey of new user
