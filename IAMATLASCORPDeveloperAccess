@@ -34,15 +34,6 @@ Metadata:
       embeds: []
       isassociatedwith:
         - e175a0cd-6d63-4701-84ca-97fc0a0981e3
-    f6eb9ec8-763d-4ca6-a282-53d50b5db0a3:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 370
-        'y': 50
-      z: 0
-      embeds: []
     60c113b8-19cc-456e-8ecb-83be7dd9ab88:
       size:
         width: 60
@@ -72,12 +63,6 @@ Metadata:
       embeds: []
       dependson:
         - 171670e4-82d5-4c52-891f-e86130c3c4b4
-    25fbc7a7-3929-4e04-82db-ae99a6864df8:
-      source:
-        id: 85a8a87c-1560-49ba-b44d-d305e4da922c
-      target:
-        id: e175a0cd-6d63-4701-84ca-97fc0a0981e3
-      z: 11
 Resources:
   IAMATLASCorpAzureAdUser:
     Type: 'AWS::IAM::User'
@@ -124,15 +109,6 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 85a8a87c-1560-49ba-b44d-d305e4da922c
-  IAMATLASCORPAzureADUserAccessCreds:
-    Type: 'AWS::IAM::AccessKey'
-    Properties:
-      UserName: !Ref IAMATLASCorpAzureAdUser
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: f6eb9ec8-763d-4ca6-a282-53d50b5db0a3
-    DependsOn:
-      - IAMATLASCorpAzureAdUser
   IAMATLASCORPAdministratorRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -199,12 +175,3 @@ Resources:
         id: e8caaf85-48e4-4ed1-9a61-be7c3326ad22
     DependsOn:
       - IAMATLASCorpDeveloperRole
-Outputs:
-  AccessKey:
-    Value: !Ref IAMATLASCORPAzureADUserAccessCreds
-    Description: AWSAccessKeyId of new user
-  SecretKey:
-    Value: !GetAtt 
-      - IAMATLASCORPAzureADUserAccessCreds
-      - SecretAccessKey
-    Description: AWSSecretKey of new user
